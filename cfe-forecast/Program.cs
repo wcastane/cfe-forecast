@@ -3,9 +3,9 @@
 var tarifa1C = new PriceRate
 {
     Steps = new List<PriceStep>() {
-        new PriceStep { Step = Steps.basico, Quantity = 300, Price = 0.866M, Currency = Currency.MXN },
-        new PriceStep { Step = Steps.intermedio1, Quantity = 300, Price = 1.004M, Currency = Currency.MXN },
-        new PriceStep { Step = Steps.intermedio2, Quantity = 300, Price = 1.198M, Currency = Currency.MXN },
+        new PriceStep { Step = Steps.basico, Quantity = 300, Price = 0.773M, Currency = Currency.MXN },
+        new PriceStep { Step = Steps.intermedio1, Quantity = 300, Price = 0.898M, Currency = Currency.MXN },
+        new PriceStep { Step = Steps.intermedio2, Quantity = 300, Price = 1.158M, Currency = Currency.MXN },
         new PriceStep { Step = Steps.Excedente, Price = 3.082M, Currency = Currency.MXN }}
 };
 
@@ -170,7 +170,7 @@ class cfeInvoice
             if (this.Consumed > 0) FillDetails(PriceRate);
         }
     }
-    public int Consumed { get => this.CurrentRecord - LastRecord; }
+    public int Consumed { get => this.CurrentRecord - this.LastRecord; }
     public decimal ConsumedValue { get { return this.Details.Sum(x => x.ConsumedValue); } }
     public List<cfeInvoiceDetail> Details
     {
