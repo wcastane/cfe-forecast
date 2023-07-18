@@ -1,9 +1,11 @@
-﻿var tarifa1C = new PriceRate
+﻿using System.Globalization;
+
+var tarifa1C = new PriceRate
 {
     Steps = new List<PriceStep>() {
-        new PriceStep { Step = Steps.basico, Quantity = 300, Price = 0.773M, Currency = Currency.MXN },
-        new PriceStep { Step = Steps.intermedio1, Quantity = 300, Price = 0.898M, Currency = Currency.MXN },
-        new PriceStep { Step = Steps.intermedio2, Quantity = 300, Price = 1.158M, Currency = Currency.MXN },
+        new PriceStep { Step = Steps.basico, Quantity = 300, Price = 0.866M, Currency = Currency.MXN },
+        new PriceStep { Step = Steps.intermedio1, Quantity = 300, Price = 1.004M, Currency = Currency.MXN },
+        new PriceStep { Step = Steps.intermedio2, Quantity = 300, Price = 1.198M, Currency = Currency.MXN },
         new PriceStep { Step = Steps.Excedente, Price = 3.082M, Currency = Currency.MXN }}
 };
 
@@ -15,16 +17,32 @@
 cfeInvoice myInvoice = new cfeInvoice
 {
     PriceRate = tarifa1C,
-    LastRecord = 28320,
-    CurrentRecord = 28841
+    StartDate = new DateTime(2023,04,11), 
+    EndDate = new DateTime(2023,06,08),
+    LastRecord = 2087,
+    CurrentRecord = 2600
 };
 
-Console.WriteLine($"Lectura Anterior: {myInvoice.LastRecord}, Lectura Actual: {myInvoice.CurrentRecord}");
+cfeForecast myForecast = new cfeForecast(myInvoice, 3553);
+
+CultureInfo info = new CultureInfo("es-MX");
+Console.WriteLine($"Lectura Anterior: {myInvoice.LastRecord} ({myInvoice.StartDate.ToString("d", info)}), Lectura Actual: {myInvoice.CurrentRecord} ({myInvoice.EndDate.ToString("d", info)})");
+Console.WriteLine($"Dias consumidos: {myInvoice.InvoiceDays}");
 foreach (var item in myInvoice.Details)
 {
     Console.WriteLine(String.Format("{0,15} {1,6} {2,20}", item.Step.ToString(), item.Consumed, item.ConsumedValue));
 }
 Console.WriteLine("{0,15} {1,6} {2,20}","Suma", myInvoice.Consumed, myInvoice.ConsumedValue);
+Console.WriteLine("{0,15} {1,6} {2,20}", "Total", "", myInvoice.ConsumedValue * 1.16M);
+Console.WriteLine("---------------------------------------------------------");
+Console.WriteLine($"Lectura Anterior: {myForecast.LastRecord} ({myForecast.StartDate.ToString("d", info)}), Lectura Actual: {myForecast.CurrentRecord} ({myForecast.EndDate.ToString("d", info)})");
+Console.WriteLine($"Dias consumidos: {myForecast.ForcastDays}, Dias restantes: {myForecast.RemainingForcastDays}");
+foreach (var item in myForecast.Details)
+{
+    Console.WriteLine(String.Format("{0,15} {1,6} {2,20}", item.Step.ToString(), item.Consumed, item.ConsumedValue));
+}
+Console.WriteLine("{0,15} {1,6} {2,20}", "Suma", myForecast.Consumed, myForecast.ConsumedValue);
+Console.WriteLine("{0,15} {1,6} {2,20}", "Total", "", myForecast.ConsumedValue * 1.16M);
 
 public enum Steps
 {
@@ -38,6 +56,36 @@ public enum Currency
 { 
     MXN = 1,
     USD = 2
+}
+
+class cfeForecast : cfeInvoice
+{
+    public cfeForecast(cfeInvoice invoice, int CurrentRecord)
+    {
+        this.Invoice = invoice;
+        this.PriceRate = invoice.PriceRate;
+        this.StartDate = invoice.EndDate;
+        this.EndDate = invoice.EndDate.AddMonths(2);
+        this.LastRecord = invoice.CurrentRecord;
+        this.CurrentRecord = CurrentRecord + (this.RemainingForcastDays * ((CurrentRecord - this.LastRecord) / this.ForcastDays));
+    }
+    public int ForcastDays
+    {
+        get
+        {
+            System.TimeSpan diffResult = DateTime.Now.Subtract(this.StartDate);
+            return diffResult.Days;
+        }
+    }
+    public int RemainingForcastDays
+    {
+        get
+        {
+            System.TimeSpan diffResult = this.EndDate.Subtract(DateTime.Now);
+            return diffResult.Days;
+        }
+    }
+    public cfeInvoice Invoice { get; set; }
 }
 
 class cfeInvoice
@@ -86,6 +134,16 @@ class cfeInvoice
         }
     }
 
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public int InvoiceDays 
+    {
+        get
+        {
+            System.TimeSpan diffResult = this.EndDate.Subtract(this.StartDate);
+            return diffResult.Days;
+        }
+    }
     int _LastRecord = 0;
     public int LastRecord 
     {
