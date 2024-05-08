@@ -3,10 +3,10 @@
 var tarifa1C = new PriceRate
 {
     Steps = new List<PriceStep>() {
-        new PriceStep { Step = Steps.basico, Quantity = 300, Price = 0.773M, Currency = Currency.MXN },
-        new PriceStep { Step = Steps.intermedio1, Quantity = 300, Price = 0.898M, Currency = Currency.MXN },
-        new PriceStep { Step = Steps.intermedio2, Quantity = 300, Price = 1.158M, Currency = Currency.MXN },
-        new PriceStep { Step = Steps.Excedente, Price = 3.082M, Currency = Currency.MXN }}
+        new PriceStep { Step = Steps.basico, Quantity = 300, Price = 0.876M, Currency = Currency.MXN },
+        new PriceStep { Step = Steps.intermedio1, Quantity = 300, Price = 1.0168M, Currency = Currency.MXN },
+        new PriceStep { Step = Steps.intermedio2, Quantity = 300, Price = 1.310M, Currency = Currency.MXN },
+        new PriceStep { Step = Steps.Excedente, Price = 3.4962M, Currency = Currency.MXN }}
 };
 
 //cfeInvoice myInvoice = new cfeInvoice();
@@ -17,13 +17,13 @@ var tarifa1C = new PriceRate
 cfeInvoice myInvoice = new cfeInvoice
 {
     PriceRate = tarifa1C,
-    StartDate = new DateTime(2023,04,11), 
-    EndDate = new DateTime(2023,06,08),
-    LastRecord = 2087,
-    CurrentRecord = 2600
+    StartDate = new DateTime(2024,02,07), 
+    EndDate = new DateTime(2024,04,08),
+    LastRecord = 6425,
+    CurrentRecord = 7087
 };
 
-cfeForecast myForecast = new cfeForecast(myInvoice, 3553);
+cfeForecast myForecast = new cfeForecast(myInvoice, 7677);
 
 CultureInfo info = new CultureInfo("es-MX");
 Console.WriteLine($"Lectura Anterior: {myInvoice.LastRecord} ({myInvoice.StartDate.ToString("d", info)}), Lectura Actual: {myInvoice.CurrentRecord} ({myInvoice.EndDate.ToString("d", info)})");
