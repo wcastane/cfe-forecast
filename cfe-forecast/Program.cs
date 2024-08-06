@@ -23,7 +23,7 @@ cfeInvoice myInvoice = new cfeInvoice
     CurrentRecord = 7087
 };
 
-cfeForecast myForecast = new cfeForecast(myInvoice, 7677);
+cfeForecast myForecast = new cfeForecast(myInvoice, 8067);
 
 CultureInfo info = new CultureInfo("es-MX");
 Console.WriteLine($"Lectura Anterior: {myInvoice.LastRecord} ({myInvoice.StartDate.ToString("d", info)}), Lectura Actual: {myInvoice.CurrentRecord} ({myInvoice.EndDate.ToString("d", info)})");
